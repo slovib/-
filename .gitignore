@@ -1,0 +1,24 @@
+# Виртуальное окружение
+venv/
+env/
+
+# Python кэш
+__pycache__/
+*.pyc
+
+# SQLite база
+*.sqlite3
+
+# Медиафайлы (если не нужны в репо)
+*.webp
+*.jpg
+*.jpeg
+*.png
+
+# Логи
+*.log
+
+# IDE и системные файлы
+.vscode/
+.idea/
+.DS_Store

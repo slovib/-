@@ -1,0 +1,261 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск пользователей</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <style>
+        /* Общие стили */
+        body {
+            background-color: #1a1a2e; /* Тёмно-синий фон */
+            color: #e0e0e0; /* Светлый текст */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            padding-top: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+
+        /* Стили контейнера для карточек */
+        .user-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start; /* Размещение карточек слева */
+            padding-left: 20px; /* Отступ слева */
+            padding-right: 20px; /* Отступ справа */
+            margin-top: 40px; /* Добавляем отступ сверху для карточек */
+        }
+
+        /* Стили для каждой карточки */
+        .user-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            width: 280px;
+            height: 170px; /* Уменьшаем высоту карточки */
+            background-color: #2d2d44; /* Темный фон для карточек */
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Стиль при наведении на карточку */
+        .user-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .user-popup {
+            display: none;
+            position: absolute;
+            left: 70px;
+            top: -20px;
+            background: #333;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card:hover .user-popup {
+            display: block;
+        }
+
+        /* Кнопки */
+        .btn-invite {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            border-radius: 30px;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-invite:hover {
+            background-color: #45a049;
+            transform: translateY(-3px); /* Легкий подъем кнопки */
+        }
+
+        .btn-invite:focus {
+            outline: none;
+        }
+
+        /* Стили для поиска */
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: #2d2d44;
+            padding: 15px;
+            border-radius: 50px;
+            width: 80%;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-form input[type="text"] {
+            padding: 12px;
+            border-radius: 25px;
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            font-size: 16px;
+            width: 100%;
+            margin-right: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form input[type="text"]:focus {
+            background-color: #555;
+            outline: none;
+        }
+
+        /* Стиль для кнопки поиска */
+        .search-form button {
+            border-radius: 25px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            width: 120px;
+            height: 50px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form button:hover {
+            background-color: #45a049;
+        }
+
+        /* Иконка лупы */
+        .search-form i {
+            color: #e0e0e0;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        /* Стили для выпадающего списка профессий */
+        .select2-container .select2-selection--single {
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            border-radius: 25px;
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #e0e0e0;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            background-color: #4CAF50;
+            border-radius: 50%;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow:after {
+            content: '\f0d7';  /* Unicode для иконки стрелки */
+            font-family: 'FontAwesome';
+        }
+
+        /* Оформление текста в выпадающем списке */
+        .select2-container .select2-selection__placeholder {
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Поиск пользователей</h2>
+
+<form method="GET" class="search-form">
+    <i class="fa fa-search"></i> <!-- Иконка лупы -->
+    <input type="text" name="query" placeholder="Поиск по имени" value="{{ request.GET.query }}">
+    <select name="profession" id="profession-select">
+        <option value="" disabled selected>Выберите профессию</option>
+        {% for key, value in form.fields.profession.choices %}
+            <option value="{{ key }}" {% if key == request.GET.profession %}selected{% endif %}>{{ value }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Искать</button>
+</form>
+
+<div class="user-card-container">
+    {% for user in users %}
+    <div class="user-card">
+        {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Avatar" class="user-avatar">
+        {% else %}
+            <img src="/media/avatars/default.jpg" alt="Avatar" class="user-avatar">
+        {% endif %}
+
+        <div class="user-info">
+            <strong>{{ user.username }}</strong>
+            <span>{{ user.get_profession_display }}</span>
+        </div>
+
+        <div class="user-popup">
+            <p><strong>{{ user.username }}</strong></p>
+            <p>Профессия: {{ user.get_profession_display }}</p>
+            <p>Навыки: {{ user.skills }}</p>
+            <p>О себе: {{ user.bio }}</p>
+        </div>
+
+        <form method="POST" action="{% url 'startup:invite_user' user_id=user.id startup_id=startup_id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-invite">Пригласить в стартап</button>
+        </form>
+    </div>
+    {% empty %}
+    <p>Нет пользователей.</p>
+    {% endfor %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#profession-select').select2({
+            placeholder: "Выберите профессию",
+            allowClear: true,
+            width: '100%',
+            theme: 'classic'
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+{% load static %}
+<h2>Задача: {{ task.title }}</h2>
+<p><strong>Описание:</strong> {{ task.description|linebreaks }}</p>
+<p><strong>Приоритет:</strong> {{ task.get_priority_display }}</p>
+<p><strong>Дедлайн:</strong> {{ task.due_date|date:"d.m.Y H:i" }}</p>
+<p><strong>Назначено:</strong> {{ task.assigned_to.username|default:"не назначено" }}</p>
+
+<hr>
+
+<h3>🔹 Подзадачи</h3>
+<ul>
+  {% for sub in subtasks %}
+    <li
+      style="
+        {% if sub.is_completed %}
+          text-decoration: line-through;
+        {% elif sub.due_date and sub.due_date < now %}
+          color: red;
+        {% endif %}
+        margin-bottom: 8px;
+      "
+    >
+      <strong>{{ sub.title }}</strong> — {{ sub.assigned_to.username|default:"не назначено" }}
+
+      {% if sub.is_completed %}
+        ✅
+      {% else %}
+        ❌
+      {% endif %}
+
+      {% if sub.due_date %}
+        <br>
+        <strong>Дедлайн:</strong>
+        <span
+          style="{% if not sub.is_completed and sub.due_date < now %}background-color: #ffcccc; padding: 2px 4px; border-radius: 4px;{% endif %}"
+        >
+          {{ sub.due_date|date:"d.m.Y H:i" }}
+        </span>
+      {% endif %}
+
+      <form method="post" action="{% url 'tasks:toggle_subtask' sub.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">
+          {% if sub.is_completed %}Вернуть в работу{% else %}Выполнено{% endif %}
+        </button>
+      </form>
+
+      <a href="{% url 'tasks:edit_subtask' sub.id %}" style="margin-left: 10px;">✏️ Редактировать</a>
+      <a href="{% url 'tasks:delete_subtask' sub.id %}" onclick="return confirm('Удалить подзадачу?');" style="color:red; margin-left: 10px;">🗑️ Удалить</a>
+    </li>
+  {% empty %}
+    <li>Подзадач пока нет.</li>
+  {% endfor %}
+</ul>
+
+<h4>➕ Добавить подзадачу</h4>
+<form method="post">
+  {% csrf_token %}
+  {{ subtask_form.as_p }}
+  <button type="submit" name="add_subtask">Добавить</button>
+</form>
+
+<hr>
+
+<h3>💬 Комментарии</h3>
+{% for comment in comments %}
+  <div style="border: 1px solid #ccc; padding: 8px; margin-bottom: 10px;">
+    <strong>{{ comment.author.username }}</strong> — {{ comment.created_at|date:"d.m.Y H:i" }}<br>
+    <p>{{ comment.text|linebreaks }}</p>
+    {% if comment.file %}
+      <a href="{{ comment.file.url }}" target="_blank">📎 Вложение</a>
+    {% endif %}
+  </div>
+{% empty %}
+  <p>Комментариев пока нет.</p>
+{% endfor %}
+
+<h4>✍️ Добавить комментарий</h4>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" name="add_comment">Отправить</button>
+</form>
+
+<hr>
+
+<h3>📜 История активности</h3>
+<ul class="activity-log">
+  {% for activity in activities %}
+    <li>
+      <strong>{{ activity.user.username }}</strong>
+      {% if activity.action == 'created' %}
+        создал(а) задачу
+      {% elif activity.action == 'edited' %}
+        отредактировал(а) задачу
+      {% elif activity.action == 'completed' %}
+        выполнил(а) задачу
+      {% elif activity.action == 'reopened' %}
+        возобновил(а) задачу
+      {% elif activity.action == 'commented' %}
+        оставил(а) комментарий
+      {% elif activity.action == 'added_subtask' %}
+        добавил(а) подзадачу: <em>"{{ activity.subtask.title }}"</em>
+      {% elif activity.action == 'edited_subtask' %}
+        отредактировал(а) подзадачу: <em>"{{ activity.subtask.title }}"</em>
+      {% elif activity.action == 'deleted_subtask' %}
+        удалил(а) подзадачу
+      {% elif activity.action == 'completed_subtask' %}
+        выполнил(а) подзадачу: <em>"{{ activity.subtask.title }}"</em>
+      {% elif activity.action == 'reopened_subtask' %}
+        возобновил(а) подзадачу: <em>"{{ activity.subtask.title }}"</em>
+      {% elif activity.action == 'deleted' %}
+        удалил(а) задачу
+      {% endif %}
+      <small class="text-muted"> — {{ activity.timestamp|date:"d.m.Y H:i" }}</small>
+    </li>
+  {% endfor %}
+</ul>
+<form method="post" action="{% url 'tasks:clear_activity' task.id %}" onsubmit="return confirm('Вы уверены, что хотите очистить историю?');">
+  {% csrf_token %}
+  <button type="submit" style="color: red;">🧹 Очистить историю</button>
+</form>
+
+
+<p><a href="{% url 'tasks:team_detail' team.id %}">← Назад к команде</a></p>

@@ -1,0 +1,8 @@
+<h2>Редактирование подзадачи</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Сохранить</button>
+</form>
+
+<p><a href="{% url 'tasks:task_detail' task.id %}">← Назад к задаче</a></p>

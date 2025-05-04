@@ -1,0 +1,19 @@
+<!-- startup/templates/startup/add_user_to_startup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить участников в {{ startup.name }}</title>
+</head>
+<body>
+    <h1>Добавить участников в стартап "{{ startup.name }}"</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Добавить участников</button>
+    </form>
+
+    <a href="{% url 'startup_detail' startup.id %}">Назад к стартапу</a>
+</body>
+</html>

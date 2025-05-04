@@ -1,0 +1,18 @@
+
+{% block content %}
+<div class="container">
+    <h2>Профиль {{ user.username }}</h2>
+
+    <!-- Проверяем, есть ли аватар -->
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="Аватар" width="150">
+    {% else %}
+        <img src="/media/avatars/default.jpg" alt="Аватар" width="150">
+    {% endif %}
+
+    <p><strong>Описание:</strong> {{ user.bio }}</p>
+    <p><strong>Навыки:</strong> {{ user.skills }}</p>
+    <p><strong>Профессия:</strong> {{ user.profession }}</p>
+    <a href="{% url 'users:profile_edit' %}">Редактировать профиль</a>
+</div>
+{% endblock %}

@@ -1,0 +1,150 @@
+<style>
+    body {
+        background-color: #12172b;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    h1 {
+        text-align: center;
+        color: #00aaff;
+    }
+    
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+        background-color: #1e1e2f;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    .filter-form select, .filter-form input {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        background: #2c2f44;
+        color: white;
+    }
+    
+    .filter-form button {
+        padding: 8px 15px;
+        background-color: #00aaff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+    }
+    
+    .news-container {
+        background-color: #1e1e2f;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .news-item {
+        padding: 20px;
+        border-bottom: 1px solid #444;
+        margin-bottom: 20px;
+    }
+    
+    .news-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .startup-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+    
+    .startup-name {
+        font-weight: bold;
+        color: #00aaff;
+    }
+    
+    .news-item h2 {
+        color: #00aaff;
+    }
+    
+    .news-item p {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    
+    .news-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+</style>
+
+{% block content %}
+<div class="container">
+    <h1>Новости</h1>
+
+    <!-- Форма фильтрации -->
+    <form method="GET" action="{% url 'news:news_list' %}" class="filter-form">
+        <select name="startup">
+            <option value="">Все стартапы</option>
+            {% for s in startups %}
+                <option value="{{ s.id }}" {% if request.GET.startup == s.id|stringformat:"s" %}selected{% endif %}>
+                    {{ s.name }}
+                </option>
+            {% endfor %}
+        </select>
+        
+        <input type="text" name="title" placeholder="Поиск по заголовку" value="{{ request.GET.title }}">
+        
+        <select name="date_filter">
+            <option value="">Все даты</option>
+            <option value="7" {% if request.GET.date_filter == "7" %}selected{% endif %}>Последние 7 дней</option>
+            <option value="30" {% if request.GET.date_filter == "30" %}selected{% endif %}>Последние 30 дней</option>
+        </select>
+        
+        <button type="submit">Применить</button>
+    </form>
+
+    <div class="news-container">
+        {% for item in news %}
+            <div class="news-item">
+                <div class="news-header">
+                    {% if item.startup.logo %}
+                        <a href="{% url 'news:startup_detail' item.startup.id %}">
+                            <img src="{{ item.startup.logo.url }}" alt="Логотип {{ item.startup.name }}" class="startup-logo">
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'news:startup_detail' item.startup.id %}" class="startup-name">
+                        {{ item.startup.name }}
+                    </a>
+                </div>
+
+                <h2>{{ item.title }}</h2>
+                <p>{{ item.content }}</p>
+                <p><strong>Дата публикации:</strong> {{ item.created_at }}</p>
+
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="Изображение новости" class="news-image">
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>Новостей пока нет.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

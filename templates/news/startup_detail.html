@@ -1,0 +1,140 @@
+<style>
+    body {
+        background-color: #0a192f;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .startup-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .startup-logo-big {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        background-color: #1e293b;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .filter-form input, .filter-form select {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        background: #2c3e50;
+        color: white;
+    }
+
+    .filter-form button {
+        padding: 8px 15px;
+        background-color: #4f9cf9;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+    }
+
+    .news-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .news-item {
+        background-color: #1e293b;
+        color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .news-item h2 {
+        margin: 0 0 10px 0;
+        font-size: 1.3rem;
+    }
+
+    .news-item p {
+        margin: 5px 0;
+    }
+
+    .news-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+    a {
+        color: #4f9cf9;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+{% block content %}
+<div class="container">
+    <div class="startup-header">
+        {% if startup.logo %}
+            <img src="{{ startup.logo.url }}" alt="Логотип {{ startup.name }}" class="startup-logo-big">
+        {% endif %}
+        <h1>{{ startup.name }}</h1>
+    </div>
+
+    <p><strong>Описание:</strong> {{ startup.description }}</p>
+    <p><strong>Основатель:</strong> {{ startup.founder.username }}</p>
+
+    
+
+    <h2>Новости стартапа</h2>
+
+    
+    <!-- Форма фильтрации -->
+    <form method="GET" action="{% url 'news:startup_detail' startup.id %}" class="filter-form">
+        <input type="text" name="title" placeholder="Поиск по заголовку" value="{{ request.GET.title }}">
+        
+        <select name="date_filter">
+            <option value="">Все даты</option>
+            <option value="7" {% if request.GET.date_filter == "7" %}selected{% endif %}>Последние 7 дней</option>
+            <option value="30" {% if request.GET.date_filter == "30" %}selected{% endif %}>Последние 30 дней</option>
+        </select>
+
+        <button type="submit">Применить</button>
+    </form>
+    <div class="news-container">
+        {% for item in news %}
+            <div class="news-item">
+                <h2>{{ item.title }}</h2>
+                <p>{{ item.content }}</p>
+                <p><strong>Дата публикации:</strong> {{ item.created_at }}</p>
+
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="Изображение новости" class="news-image">
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>Этот стартап пока не публиковал новости.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

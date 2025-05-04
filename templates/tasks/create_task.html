@@ -1,0 +1,27 @@
+<form method="post">
+    {% csrf_token %}
+    
+    {{ form.non_field_errors }}
+
+    <label for="{{ form.title.id_for_label }}">Заголовок:</label><br>
+    {{ form.title }}<br>
+    {{ form.title.errors }}<br><br>
+
+    <label for="{{ form.description.id_for_label }}">Описание:</label><br>
+    {{ form.description }}<br>
+    {{ form.description.errors }}<br><br>
+
+    <label for="{{ form.assigned_to.id_for_label }}">Назначить участника:</label><br>
+    {{ form.assigned_to }}<br>
+    {{ form.assigned_to.errors }}<br><br>
+
+    <label for="{{ form.priority.id_for_label }}">Приоритет:</label><br>
+    {{ form.priority }}<br>
+    {{ form.priority.errors }}<br><br>
+
+    <label for="{{ form.due_date.id_for_label }}">Дедлайн:</label><br>
+    {{ form.due_date }}<br>
+    {{ form.due_date.errors }}<br><br>
+
+    <button type="submit">Создать задачу</button>
+</form>

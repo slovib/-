@@ -1,0 +1,189 @@
+<h2>Команда: {{ team.name }}</h2>
+<p>Стартап: {{ team.startup.name }}</p>
+
+<h3>Участники:</h3>
+<ul>
+  {% for membership in members %}
+    <li>
+      {{ membership.user.username }}
+      {% if membership.role %}
+        <span style="background-color: #e0e0e0; color: #333; padding: 2px 6px; border-radius: 4px; font-size: 0.9em;">
+          {{ membership.role.name }}
+        </span>
+      {% endif %}
+      
+      {% if membership.is_captain %} ⭐ Капитан{% endif %}
+      
+      {% if is_founder or is_captain %}
+        {% if membership.user != user %}
+          — <a href="{% url 'tasks:remove_member' team.id membership.user.id %}">Удалить</a>
+        {% endif %}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+
+{% if is_founder or is_captain %}
+<form method="post" action="{% url 'tasks:add_member' team.id %}">
+  {% csrf_token %}
+  <label for="user_id">Добавить участника:</label>
+  <select name="user_id" required>
+    {% for u in all_users %}
+      {% if u.id not in current_users %}
+        <option value="{{ u.id }}">{{ u.username }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+
+  <label for="role_name">Роль (введите вручную):</label>
+  <input type="text" name="role_name" required placeholder="Например: дизайнер">
+  <button type="submit">Добавить</button>
+</form>
+{% endif %}
+
+{% if not is_founder and not is_captain %}
+  <p><a href="{% url 'tasks:leave_team' team.id %}">Покинуть команду</a></p>
+{% endif %}
+
+<hr>
+<h3>Фильтр задач:</h3>
+<form method="get">
+  {{ form.as_p }}
+  <button type="submit">🔍 Применить</button>
+</form>
+
+<h3>Задачи:</h3>
+<ul>
+  {% for task in tasks %}
+    <li style="{% if task.is_overdue %}color: red;{% endif %}">
+        <strong>
+          <a href="{% url 'tasks:task_detail' task.id %}">
+            {{ task.title }}
+          </a>
+        </strong> —      
+      {% if task.is_completed %}
+        ✅ Выполнено
+      {% else %}
+        ❌ В процессе
+      {% endif %}
+      <br>
+      Приоритет: {{ task.get_priority_display|default:"-" }}<br>
+      {% if task.due_date %}
+        Дедлайн: {{ task.due_date|date:"d.m.Y H:i" }}{% if task.is_overdue %} (просрочено){% endif %}
+      {% endif %}
+      <br>
+      Назначено: {{ task.assigned_to.username|default:"не назначено" }}
+      <br>
+
+      {% if user == task.assigned_to or is_captain or is_founder %}
+        <a href="{% url 'tasks:toggle_task_complete' task.id %}">Переключить выполнение</a>
+      {% endif %}
+
+      {% if user == task.created_by or is_captain or is_founder %}
+        | <a href="{% url 'tasks:edit_task' task.id %}">Редактировать</a>
+        | <a href="{% url 'tasks:delete_task' task.id %}">Удалить</a>
+        | <a href="{% url 'tasks:archive_task' task.id %}">Архивировать</a>  {# 👈 добавь это #}
+      {% endif %}
+
+
+    </li>
+  {% empty %}
+    <li>Пока нет задач.</li>
+  {% endfor %}
+</ul>
+
+{% if is_captain or is_founder %}
+  <p><a href="{% url 'tasks:create_task' team.id %}">➕ Создать задачу</a></p>
+  <a href="{% url 'tasks:archived_tasks' team.id %}">📦 Архив задач</a>
+{% endif %}
+{% if is_founder or is_captain %}
+  <p>
+    <a href="{% url 'tasks:archive_completed' team.id %}" 
+       onclick="return confirm('Архивировать все завершённые задачи?')">📦 Архивировать все выполненные</a>
+  </p>
+{% endif %}
+
+<hr>
+
+{% if is_founder or is_captain %}
+  <form method="post" action="{% url 'tasks:delete_team' team.id %}">
+    {% csrf_token %}
+    <button type="submit" onclick="return confirm('Ты уверен, что хочешь удалить эту команду и все задачи?')">🗑️ Удалить команду</button>
+  </form>
+{% endif %}
+
+<h3>📊 Статистика задач</h3>
+<ul>
+  <li>Всего задач: {{ total_tasks }}</li>
+  <li>Выполнено: {{ completed_tasks }} ({{ completed_percent }}%)</li>
+  <li>Просрочено: {{ overdue_tasks }}</li>
+</ul>
+
+<canvas id="progressChart" width="300" height="300" style="max-width: 300px; max-height: 300px;"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const completed = {{ completed_tasks }};
+    const overdue = {{ overdue_tasks }};
+    const total = {{ total_tasks }};
+    const incomplete = total - completed;
+
+    const adjustedIncomplete = Math.max(0, incomplete - overdue);
+
+    const ctx = document.getElementById('progressChart');
+    if (ctx) {
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Выполнено', 'Не выполнено', 'Просрочено'],
+          datasets: [{
+            data: [completed, adjustedIncomplete, overdue],
+            backgroundColor: ['#4CAF50', '#FF9800', '#F44336']  // зелёный, оранжевый, красный
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Статус задач'
+            }
+          }
+        }
+      });
+    } else {
+      console.warn("Элемент #progressChart не найден в DOM.");
+    }
+  });
+</script>
+
+
+
+<!-- Подключение стилей FullCalendar -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css" rel="stylesheet" />
+
+<!-- Подключение JavaScript для FullCalendar -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
+
+<h3>📅 Календарь задач</h3>
+<div id="taskCalendar" style="max-width: 50%; margin: 20px 0; height: 300px;"></div>
+
+<script>
+  $(document).ready(function() {
+    const tasks = {{ calendar_tasks_json|safe }};  // Подставь задачи для календаря, например, в JSON формате
+
+    $('#taskCalendar').fullCalendar({
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      locale: 'ru',
+      events: tasks
+    });
+  });
+</script>

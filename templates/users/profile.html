@@ -1,18 +1,282 @@
-
 {% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1f2e3d, #355471);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+    }
+
+    .main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #192a3a;
+        padding: 15px 30px;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .logo {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+
+    .hamburger {
+        font-size: 28px;
+        cursor: pointer;
+        display: block; /* always visible */
+    }
+
+    .mobile-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 30px;
+        background-color: #22384d;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .mobile-menu.show {
+        display: flex;
+    }
+
+    .mobile-menu a {
+        color: #fff;
+        padding: 10px 0;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .mobile-menu a:hover {
+        color: #79b8ff;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: rgba(20, 35, 50, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        color: #e0eaf5;
+    }
+
+    h2, h3 {
+        text-align: center;
+        color: #d0e0f0;
+        margin-bottom: 30px;
+    }
+
+    .profile-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        background-color: #22384d;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: inset 0 0 8px #1a2a3a;
+        margin-bottom: 40px;
+    }
+
+    .avatar {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 30px;
+        border: 5px solid #4f7db2;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-info p {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: #c4d6e5;
+    }
+
+    .edit-profile-btn {
+        display: inline-block;
+        background-color: #4f7db2;
+        padding: 10px 20px;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s;
+        margin-top: 10px;
+    }
+
+    .edit-profile-btn:hover {
+        background-color: #3c679c;
+        transform: scale(1.05);
+    }
+
+    .startup-section {
+        margin-top: 50px;
+    }
+
+    .startup-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        justify-content: center;
+    }
+
+    .startup-item {
+        background-color: #23364d;
+        width: 300px;
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        text-align: center;
+    }
+
+    .startup-item:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .startup-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        object-fit: cover;
+        background-color: #1c2d3c;
+        padding: 4px;
+        margin-bottom: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .startup-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #d2e6ff;
+        margin-bottom: 10px;
+    }
+
+    .startup-description {
+        font-size: 0.95rem;
+        color: #a6c7e6;
+        margin-bottom: 12px;
+    }
+
+    .startup-role {
+        font-size: 0.9rem;
+        color: #79b8ff;
+        margin-bottom: 15px;
+    }
+
+    .startup-link {
+        background-color: #4f7db2;
+        padding: 8px 16px;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .startup-link:hover {
+        background-color: #3a5d85;
+    }
+
+    @media (max-width: 600px) {
+        .profile-header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .avatar {
+            margin: 0 0 20px 0;
+        }
+    }
+</style>
+
+<header class="main-header">
+    <div class="logo">🚀 MirecleHub</div>
+    <div class="hamburger" id="hamburger">&#9776;</div>
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'users:profile' %}">Профиль</a>
+        <a href="{% url 'users:profile_edit' %}">Редактировать</a>
+        <a href="{% url 'startup:startup_list' %}">Стартапы</a>
+    </nav>
+</header>
+
 <div class="container">
-    <h2>Профиль {{ user.username }}</h2>
+    <h2>👤 Профиль {{ user.username }}</h2>
 
-    <!-- Проверяем, есть ли аватар -->
-    {% if user.avatar %}
-        <img src="{{ user.avatar.url }}" alt="Аватар" width="150">
-    {% else %}
-        <img src="/media/avatars/default.jpg" alt="Аватар" width="150">
-    {% endif %}
+    <div class="profile-header">
+        {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar">
+        {% else %}
+            <img src="/media/avatars/default.jpg" alt="Аватар" class="avatar">
+        {% endif %}
+        <div class="profile-info">
+            <p><strong>Описание:</strong> {{ user.bio|default:"Нет описания" }}</p>
+            <p><strong>Навыки:</strong> {{ user.skills|default:"—" }}</p>
+            <p><strong>Профессия:</strong> {{ user.profession|default:"—" }}</p>
+            <a href="{% url 'users:profile_edit' %}" class="edit-profile-btn">✏️ Редактировать профиль</a>
+        </div>
+    </div>
 
-    <p><strong>Описание:</strong> {{ user.bio }}</p>
-    <p><strong>Навыки:</strong> {{ user.skills }}</p>
-    <p><strong>Профессия:</strong> {{ user.profession }}</p>
-    <a href="{% url 'users:profile_edit' %}">Редактировать профиль</a>
+    <div class="startup-section">
+        <h3>🚀 Стартапы</h3>
+        {% if startups_with_roles %}
+            <div class="startup-list">
+                {% for item in startups_with_roles %}
+                    <div class="startup-item">
+                        {% if item.startup.logo %}
+                            <img src="{{ item.startup.logo.url }}" alt="Логотип {{ item.startup.name }}" class="startup-logo">
+                        {% else %}
+                            <img src="/static/img/startup_placeholder.png" alt="Логотип по умолчанию" class="startup-logo">
+                        {% endif %}
+                        <h4 class="startup-name">{{ item.startup.name }}</h4>
+                        <p class="startup-description">{{ item.startup.description|truncatewords:20 }}</p>
+                        <p class="startup-role">🧩 <strong>{{ item.role|default:"Участник" }}</strong></p>
+                        <a href="{% url 'startup:startup_detail' item.startup.id %}" class="startup-link">Подробнее</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center;">Вы пока не участвуете ни в одном стартапе.</p>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.remove("show");
+        }
+    });
+
+    const links = mobileMenu.querySelectorAll("a");
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            mobileMenu.classList.remove("show");
+        });
+    });
+</script>
 {% endblock %}

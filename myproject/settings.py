@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'chat',
     'channels',
     'tasks',
+    'social_django',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -91,6 +94,9 @@ CHANNEL_LAYERS = {
         },
     },
 }
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23liNBj2buznb2idlF'
+SOCIAL_AUTH_GITHUB_SECRET = 'abeffe2f9e251fbfa0d01b35fc680d924491f9bf'
+
 
 
 
@@ -102,14 +108,11 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'startups',  # Название вашей базы данных
-        'USER': 'postgres',  # Имя пользователя
-        'PASSWORD': 'rootroot',  # Пароль пользователя
-        'HOST': 'localhost',  # Обычно localhost, если база на вашем сервере
-        'PORT': '5432',  # Стандартный порт PostgreSQL
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # Путь к файлу базы данных
     }
 }
+
 
 
 
@@ -143,6 +146,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_URL = '/static/'
+
+# Для разработки (чтобы Django находил статику)
+import os
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -159,6 +167,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'azumabekov695@gmail.com'  # Ваш email в Gmail
-EMAIL_HOST_PASSWORD = 'qbuu zcbi wkxp chqz '  # Сгенерированный пароль для приложения
-DEFAULT_FROM_EMAIL = 'mireclecinema@gmail.com'  # Адрес отправителя по умолчанию
+EMAIL_HOST_USER = 'azumabekov695@gmail.com'
+EMAIL_HOST_PASSWORD = 'qzpi yzse edow kqof'
+DEFAULT_FROM_EMAIL = 'azumabekov695@gmail.com'
+

@@ -1,22 +1,116 @@
-<h2>Редактировать задачу: {{ task.title }}</h2>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактировать задачу: {{ task.title }}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0a1124;
+      font-family: 'Segoe UI', sans-serif;
+      color: #f1f5ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
 
-<form method="post">
-    {% csrf_token %}
-    <label for="title">Заголовок:</label>
-    <input type="text" name="title" value="{{ task.title }}" required><br><br>
+    h2 {
+      font-size: 26px;
+      margin-bottom: 24px;
+      color: #ffffff;
+      text-align: center;
+    }
 
-    <label for="description">Описание:</label>
-    <textarea name="description">{{ task.description }}</textarea><br><br>
+    .form-container {
+      background-color: #162346;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 600px;
+    }
 
-    <label for="assigned_to">Назначить участника:</label>
-    <select name="assigned_to">
-        <option value="">-- Не назначено --</option>
-        {% for member in members %}
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #cfd7ff;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: none;
+      border-radius: 10px;
+      background-color: #1e2f5a;
+      color: #ffffff;
+      transition: box-shadow 0.2s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #448aff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1a75ff, #4da0ff);
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #145bd6, #3b90ff);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Редактировать задачу: {{ task.title }}</h2>
+
+  <div class="form-container">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="title">Заголовок:</label>
+        <input type="text" name="title" value="{{ task.title }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Описание:</label>
+        <textarea name="description" rows="5">{{ task.description }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="assigned_to">Назначить участника:</label>
+        <select name="assigned_to">
+          <option value="">-- Не назначено --</option>
+          {% for member in members %}
             <option value="{{ member.id }}" {% if task.assigned_to.id == member.id %}selected{% endif %}>
-                {{ member.username }}
+              {{ member.username }}
             </option>
-        {% endfor %}
-    </select><br><br>
+          {% endfor %}
+        </select>
+      </div>
 
-    <button type="submit">Сохранить</button>
-</form>
+      <button type="submit">Сохранить</button>
+    </form>
+  </div>
+
+</body>
+</html>

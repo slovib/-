@@ -1,172 +1,133 @@
-{% block content %}
-    <h1>Чат стартапа: {{ startup.name }}</h1>
-    
-    <div class="chat-container">
-        <div class="chat-box">
-            {% for message in messages %}
-                <div class="chat-message">
-                    <div class="message-header">
-                        <strong>{{ message.user.username }}</strong>
-                        <span class="message-time">{{ message.created_at|date:"H:i" }}</span>
-                    </div>
-                    <p>{{ message.content }}</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Чат стартапа {{ startup.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            background-color: #0a192f;
+            color: #e0eaf5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #192a3a;
+            padding: 15px 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .messages-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            min-height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            background-color: #22384d;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .message strong {
+            color: #f1c40f;
+        }
+        .message time {
+            font-size: 0.75rem;
+            color: #9bbbd4;
+            margin-left: 10px;
+        }
+        form.message-form {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            padding: 0 10px;
+        }
+        form.message-form textarea {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            resize: vertical;
+            min-height: 60px;
+            background-color: #2c3e50;
+            color: white;
+        }
+        form.message-form button {
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        form.message-form button:hover {
+            background-color: #2980b9;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+        .delete-btn:hover {
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">🚀 MirecleHub — чат {{ startup.name }}</div>
+</header>
 
-                    {% if message.image %}
-                        <div class="message-image">
-                            <img src="{{ message.image.url }}" alt="Изображение новости">
-                        </div>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <p class="no-messages">Чат пустой. Напишите первое сообщение!</p>
-            {% endfor %}
+<div class="messages-container" id="messages">
+    {% for msg in messages %}
+        <div class="message">
+            <strong>{{ msg.user.username }}</strong>
+            <time>{{ msg.created_at|date:"d.m.Y H:i" }}</time>
+            <p>{{ msg.content|linebreaksbr }}</p>
+
+            {% if request.user == msg.user or request.user == startup.founder %}
+                <form method="post" action="{% url 'delete_message' msg.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn" title="Удалить сообщение" onclick="return confirm('Удалить сообщение?');">🗑️</button>
+                </form>
+            {% endif %}
         </div>
+    {% empty %}
+        <p>Сообщений пока нет.</p>
+    {% endfor %}
+</div>
 
-        <form method="POST" class="message-form" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="input-container">
-                <!-- Скрепка для добавления файлов -->
-                <label for="file-upload" class="file-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#4f9cf9">
-                        <path d="M14 2H10C8.9 2 8 2.9 8 4V20C8 21.1 8.9 22 10 22H14C15.1 22 16 21.1 16 20V4C16 2.9 15.1 2 14 2ZM14 4V20H10V4H14ZM8 6H16V18H8V6Z"></path>
-                    </svg>
-                </label>
-                <input type="file" id="file-upload" name="image" style="display: none;">
-                
-                <!-- Поле для ввода текста -->
-                <input type="text" name="content" placeholder="Напишите сообщение..." class="message-input" required>
-                
-                <!-- Кнопка отправки -->
-                <button type="submit" class="submit-btn">Отправить</button>
-            </div>
-        </form>
-    </div>
-{% endblock %}
+<form method="post" class="message-form">
+    {% csrf_token %}
+    {{ form.content }}
+    <button type="submit">Отправить</button>
+</form>
 
-<style>
-    body {
-        background-color: #12172b;
-        font-family: Arial, sans-serif;
-        color: #fff;
-    }
-
-    .chat-container {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #1e293b;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    h1 {
-        text-align: center;
-        font-size: 2rem;
-        color: #00aaff;
-        margin-bottom: 20px;
-    }
-
-    .chat-box {
-        background-color: #2c3e50;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        max-height: 400px;
-        overflow-y: auto;
-        box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .chat-message {
-        background-color: #34495e;
-        padding: 12px;
-        margin-bottom: 15px;
-        border-radius: 10px;
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .chat-message strong {
-        color: #00aaff;
-        font-size: 1.1rem;
-    }
-
-    .message-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
-    }
-
-    .message-time {
-        color: #aaa;
-        font-size: 0.85rem;
-    }
-
-    .no-messages {
-        text-align: center;
-        color: #888;
-        font-size: 1.1rem;
-    }
-
-    .message-form {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-top: 10px;
-    }
-
-    .message-input {
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #444;
-        background-color: #34495e;
-        color: #fff;
-        font-size: 1rem;
-        width: 80%;
-        transition: all 0.3s ease;
-    }
-
-    .message-input:focus {
-        border-color: #00aaff;
-        outline: none;
-    }
-
-    .submit-btn {
-        padding: 12px;
-        border-radius: 8px;
-        background-color: #00aaff;
-        color: #fff;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-        width: 20%;
-        transition: all 0.3s ease;
-    }
-
-    .submit-btn:hover {
-        background-color: #0077cc;
-    }
-
-    .input-container {
-        display: flex;
-        align-items: center;
-        width: 100%;
-    }
-
-    .file-label {
-        background-color: #34495e;
-        padding: 10px;
-        border-radius: 50%;
-        cursor: pointer;
-    }
-
-    .file-label svg {
-        fill: #4f9cf9;
-        width: 24px;
-        height: 24px;
-    }
-
-    .message-image img {
-        max-width: 100%;
-        border-radius: 8px;
-        margin-top: 10px;
-    }
-</style>
+</body>
+</html>

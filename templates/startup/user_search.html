@@ -7,207 +7,241 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* Общие стили */
         body {
-            background-color: #1a1a2e; /* Тёмно-синий фон */
-            color: #e0e0e0; /* Светлый текст */
-            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1f2e3d, #355471);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 0;
-            padding-top: 40px;
+            color: #e0eaf5;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #192a3a;
+            padding: 15px 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            font-size: 28px;
+            cursor: pointer;
+            display: block;
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 60px;
+            right: 30px;
+            background-color: #22384d;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .mobile-menu.show {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            color: #fff;
+            padding: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a:hover {
+            color: #79b8ff;
         }
 
         h2 {
             text-align: center;
-            color: #ffffff;
-            margin-bottom: 30px;
+            margin: 30px 0 20px;
         }
 
-        /* Стили контейнера для карточек */
-        .user-card-container {
+        .search-form {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            justify-content: flex-start; /* Размещение карточек слева */
-            padding-left: 20px; /* Отступ слева */
-            padding-right: 20px; /* Отступ справа */
-            margin-top: 40px; /* Добавляем отступ сверху для карточек */
-        }
-
-        /* Стили для каждой карточки */
-        .user-card {
-            display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            border: 1px solid #444;
+            margin: 0 auto 30px;
+            background-color: #2d3e52;
+            padding: 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .search-form input,
+        .search-form select,
+        .search-form button {
+            margin: 10px;
+        }
+
+        .search-form input[type="text"] {
+            padding: 12px;
             border-radius: 10px;
-            width: 280px;
-            height: 170px; /* Уменьшаем высоту карточки */
-            background-color: #2d2d44; /* Темный фон для карточек */
-            position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        /* Стиль при наведении на карточку */
-        .user-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-        }
-
-        .user-info {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .user-popup {
-            display: none;
-            position: absolute;
-            left: 70px;
-            top: -20px;
-            background: #333;
-            padding: 10px;
+            background-color: #333;
+            color: #fff;
             border: 1px solid #444;
-            border-radius: 5px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            font-size: 16px;
         }
 
-        .user-card:hover .user-popup {
-            display: block;
-        }
-
-        /* Кнопки */
-        .btn-invite {
+        .search-form button {
             background-color: #4CAF50;
             color: white;
             border: none;
             padding: 12px 25px;
             cursor: pointer;
-            border-radius: 30px;
+            border-radius: 10px;
             font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .btn-invite:hover {
-            background-color: #45a049;
-            transform: translateY(-3px); /* Легкий подъем кнопки */
-        }
-
-        .btn-invite:focus {
-            outline: none;
-        }
-
-        /* Стили для поиска */
-        .search-form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            background-color: #2d2d44;
-            padding: 15px;
-            border-radius: 50px;
-            width: 80%;
-            margin: 0 auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .search-form input[type="text"] {
-            padding: 12px;
-            border-radius: 25px;
-            background-color: #333;
-            color: #e0e0e0;
-            border: 1px solid #444;
-            font-size: 16px;
-            width: 100%;
-            margin-right: 15px;
-            transition: background-color 0.3s ease;
-        }
-
-        .search-form input[type="text"]:focus {
-            background-color: #555;
-            outline: none;
-        }
-
-        /* Стиль для кнопки поиска */
-        .search-form button {
-            border-radius: 25px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            width: 120px;
-            height: 50px;
-            padding: 12px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
         .search-form button:hover {
             background-color: #45a049;
         }
 
-        /* Иконка лупы */
-        .search-form i {
-            color: #e0e0e0;
-            font-size: 24px;
-            margin-right: 15px;
-        }
-
-        /* Стили для выпадающего списка профессий */
-        .select2-container .select2-selection--single {
-            background-color: #333;
-            color: #e0e0e0;
-            border: 1px solid #444;
-            border-radius: 25px;
-            padding: 12px;
-            font-size: 16px;
-            width: 100%;
-            height: 40px;
+        .user-card-container {
             display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .user-card {
+            background-color: #23364d;
+            border-radius: 18px;
+            padding: 20px;
+            width: 260px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            text-align: center;
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #e0e0e0;
+        .user-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            background-color: #4CAF50;
+        .user-avatar {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4f7db2;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 12px;
         }
 
-        .select2-container--default .select2-selection--single .select2-selection__arrow:after {
-            content: '\f0d7';  /* Unicode для иконки стрелки */
-            font-family: 'FontAwesome';
+        .user-popup {
+    display: none;
+    position: absolute;
+    bottom: -200px; /* под карточкой */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
+    width: 250px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    z-index: 10;
+    font-size: 14px;
+    text-align: left;
+}
+
+/* Треугольник (стрелочка вверх) */
+.user-popup::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 10px 10px 10px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+.user-card:hover .user-popup {
+    display: block;
+}
+
+
+        .user-card:hover .user-popup {
+            display: block;
         }
 
-        /* Оформление текста в выпадающем списке */
-        .select2-container .select2-selection__placeholder {
-            color: #e0e0e0;
-            font-size: 16px;
+        .btn-invite {
+            background-color: #4f7db2;
+            padding: 10px 20px;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-invite:hover {
+            background-color: #3c679c;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+
+            .user-popup {
+                left: auto;
+                top: 100%;
+                width: 100%;
+                position: static;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
 <body>
 
+<header class="main-header">
+    <div class="logo">🔍 Поиск</div>
+    <div class="hamburger" id="hamburger">&#9776;</div>
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'users:profile' %}">Профиль</a>
+        <a href="{% url 'users:profile_edit' %}">Редактировать</a>
+        <a href="{% url 'startup:startup_list' %}">Стартапы</a>
+    </nav>
+</header>
+
 <h2>Поиск пользователей</h2>
 
 <form method="GET" class="search-form">
-    <i class="fa fa-search"></i> <!-- Иконка лупы -->
     <input type="text" name="query" placeholder="Поиск по имени" value="{{ request.GET.query }}">
     <select name="profession" id="profession-select">
-        <option value="" disabled selected>Выберите профессию</option>
+        <option value="">Выберите профессию</option>
         {% for key, value in form.fields.profession.choices %}
             <option value="{{ key }}" {% if key == request.GET.profession %}selected{% endif %}>{{ value }}</option>
         {% endfor %}
@@ -224,16 +258,13 @@
             <img src="/media/avatars/default.jpg" alt="Avatar" class="user-avatar">
         {% endif %}
 
-        <div class="user-info">
-            <strong>{{ user.username }}</strong>
-            <span>{{ user.get_profession_display }}</span>
-        </div>
+        <div><strong>{{ user.username }}</strong><br>{{ user.get_profession_display }}</div>
 
         <div class="user-popup">
             <p><strong>{{ user.username }}</strong></p>
             <p>Профессия: {{ user.get_profession_display }}</p>
-            <p>Навыки: {{ user.skills }}</p>
-            <p>О себе: {{ user.bio }}</p>
+            <p>Навыки: {{ user.skills|default:"—" }}</p>
+            <p>О себе: {{ user.bio|default:"—" }}</p>
         </div>
 
         <form method="POST" action="{% url 'startup:invite_user' user_id=user.id startup_id=startup_id %}">
@@ -242,18 +273,30 @@
         </form>
     </div>
     {% empty %}
-    <p>Нет пользователей.</p>
+        <p>Нет пользователей.</p>
     {% endfor %}
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#profession-select').select2({
             placeholder: "Выберите профессию",
             allowClear: true,
-            width: '100%',
-            theme: 'classic'
+            width: 'resolve'
         });
+    });
+
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.remove("show");
+        }
     });
 </script>
 

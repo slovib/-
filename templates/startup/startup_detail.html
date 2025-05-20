@@ -1,26 +1,77 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ startup.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #1e2a47;
+            background: linear-gradient(135deg, #1f2e3d, #355471);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 0;
+            color: #e0eaf5;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #192a3a;
+            padding: 15px 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            font-size: 28px;
+            cursor: pointer;
+            display: block;
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 60px;
+            right: 30px;
+            background-color: #22384d;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+
+        .mobile-menu.show {
+            display: flex;
+        }
+
+        .mobile-menu a {
             color: #fff;
-            position: relative;
+            padding: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a:hover {
+            color: #79b8ff;
         }
 
         .container {
-            width: 80%;
-            margin: 20px auto;
+            max-width: 1000px;
+            margin: 40px auto;
             padding: 30px;
-            background-color: #23374d;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background-color: rgba(20, 35, 50, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .header {
@@ -33,10 +84,9 @@
         .logo-container {
             width: 80px;
             height: 80px;
-            background-color: #1a2530;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+            background-color: #1c2d3c;
         }
 
         .logo-container img {
@@ -51,137 +101,79 @@
         }
 
         p {
-            font-size: 1.1rem;
-            margin: 10px 0;
+            font-size: 1.05rem;
         }
 
-        .role-management {
+        .role-management,
+        .user-list,
+        .teams-section {
             margin-top: 30px;
-            font-size: 1.1rem;
         }
 
-        .role-management a {
+        .role-management a,
+        .back-button,
+        .teams-section a {
             display: inline-block;
             background-color: #3498db;
-            color: #fff;
-            padding: 10px 20px;
+            color: white;
+            padding: 10px 16px;
             margin: 5px 0;
+            border-radius: 8px;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
 
-        .role-management a:hover {
+        .role-management a:hover,
+        .back-button:hover,
+        .teams-section a:hover {
             background-color: #2980b9;
         }
 
-        .user-list {
-            margin-top: 30px;
-            padding: 10px;
-            border-top: 2px solid #3498db;
+        ul {
+            padding-left: 0;
+            list-style: none;
         }
 
-        .user-list li {
-            font-size: 1rem;
-            margin: 10px 0;
+        li {
             padding: 8px;
-            background-color: #2c3e50;
-            border-radius: 5px;
+            background-color: #2a3d54;
+            margin-bottom: 8px;
+            border-radius: 8px;
         }
 
-        .user-list button {
+        button {
             background-color: #e74c3c;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: background-color 0.3s;
+            margin-left: 10px;
         }
 
-        .user-list button:hover {
+        button:hover {
             background-color: #c0392b;
         }
 
-        .back-button {
-            display: inline-block;
-            background-color: #95a5a6;
-            color: #fff;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 30px;
-        }
-
-        .back-button:hover {
-            background-color: #7f8c8d;
-        }
-
-        /* Гамбургер меню справа */
-        .hamburger-menu {
-            position: absolute;
-            top: 20px;
-            right: 20px; /* Меню будет справа */
-            font-size: 30px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        /* Сайдбар с прозрачным фоном */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -250px; /* Сдвигаем сайдбар справа */
-            height: 100%;
-            width: 250px;
-            background-color: rgba(52, 152, 219, 0.8); /* Прозрачный фон */
-            color: white;
-            transition: 0.3s;
-            padding-top: 60px;
-            z-index: 999;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 8px 16px;
-            text-decoration: none;
-            color: white;
-            font-size: 18px;
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            background-color: #1abc9c;
-        }
-
-        .sidebar .close-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 30px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .sidebar.open {
-            right: 0;
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #34495e;
+            margin: 30px 0;
         }
     </style>
 </head>
 <body>
 
-<!-- Гамбургер меню -->
-<div class="hamburger-menu" onclick="toggleSidebar()">&#9776;</div>
-
-<!-- Сайдбар -->
-<div class="sidebar" id="sidebar">
-    <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">&times;</a>
-    <a href="{% url 'news:news_list' %}">Новости</a>
-    <a href="{% url 'chat:startup_chat' startup.id %}">Перейти в чат</a>
-    <a href="{% url 'users:profile' %}">Профиль</a>
-    {% comment %} <a href="{% url 'logout' %}">Выход</a> {% endcomment %}
-</div>
+<header class="main-header">
+    <div class="logo">🚀 MirecleHub</div>
+    <div class="hamburger" id="hamburger">&#9776;</div>
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'news:news_list' %}">Новости</a>
+        <a href="{% url 'startup:search_users' startup.id %}">Найти работника</a>
+        <a href="{% url 'users:profile' %}">Профиль</a>
+    </nav>
+</header>
 
 <div class="container">
     <div class="header">
@@ -189,7 +181,7 @@
             {% if startup.logo %}
                 <img src="{{ startup.logo.url }}" alt="Логотип {{ startup.name }}">
             {% else %}
-                <p>Логотип не загружен.</p>
+                <p>Нет логотипа</p>
             {% endif %}
         </div>
         <h1>{{ startup.name }}</h1>
@@ -200,85 +192,94 @@
     <p><strong>Дата создания:</strong> {{ startup.created_at }}</p>
 
     {% if is_founder %}
-        <div class="role-management">
-            <h2>Управление стартапом</h2>
-            <a href="{% url 'startup:assign_role' startup.id %}">Назначить роль</a>
-            <a href="{% url 'startup:edit_startup' startup.id %}">Редактировать стартап</a>
-            <a href="{% url 'startup:delete_startup' startup.id %}">Удалить стартап</a>
-        </div>
-    {% endif %}
+<div class="role-management">
+    <h3>Управление стартапом</h3>
+    <a href="{% url 'startup:assign_role' startup.id %}">Назначить роль</a>
+    <a href="{% url 'startup:edit_startup' startup.id %}">Редактировать</a>
+    <a href="{% url 'startup:delete_startup' startup.id %}">Удалить</a>
+    <a href="{% url 'news:create_news' startup.id %}" style="background-color:#f39c12;">📰 Добавить новость</a>
+</div>
+{% endif %}
 
-    <a href="{% url 'startup:startup_list' %}" class="back-button">Вернуться к списку стартапов</a>
+
+    <a href="{% url 'startup:startup_list' %}" class="back-button">← Назад к списку</a>
 
     <div class="user-list">
-        <h2>Участники стартапа {{ startup.name }}</h2>
+        <h3>Участники:</h3>
         <ul>
             <li><strong>Основатель:</strong> {{ startup.founder.username }}</li>
             {% for user in users %}
                 <li>
-                    {{ user.username }} - 
+                    {{ user.username }} — 
                     {% for role in user.role_set.all %}
                         {{ role.role_name }}{% if not forloop.last %}, {% endif %}
                     {% endfor %}
 
                     {% if is_founder %}
-                        <!-- Кнопка для удаления роли пользователя -->
                         {% for role in user.role_set.all %}
                             <form method="POST" action="{% url 'startup:remove_role' role.id %}" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" onclick="return confirm('Вы уверены, что хотите удалить эту роль?')">Удалить роль</button>
+                                <button type="submit" onclick="return confirm('Удалить роль?')">- Роль</button>
                             </form>
                         {% endfor %}
-                        
-                        <!-- Кнопка для увольнения пользователя -->
                         <form method="POST" action="{% url 'startup:remove_user_from_startup' startup.id user.id %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" onclick="return confirm('Вы уверены, что хотите уволить этого пользователя?')">Уволить</button>
+                            <button type="submit" onclick="return confirm('Уволить пользователя?')">Уволить</button>
                         </form>
                     {% endif %}
                 </li>
             {% empty %}
-                <p>Нет участников.</p>
+                <li>Нет участников</li>
             {% endfor %}
         </ul>
     </div>
+
     <hr>
+
     <div class="teams-section">
-        <h2>Команды стартапа</h2>
-    
+        <h3>Команды:</h3>
         {% if startup_teams %}
             <ul>
                 {% for team in startup_teams %}
                     <li>
-                        <a href="{% url 'tasks:team_detail' team.id %}" style="color: #f1c40f;">{{ team.name }}</a>
+                        <a href="{% url 'tasks:team_detail' team.id %}">{{ team.name }}</a>
                         {% if team.captain %}
-                        (Капитан: {{ team.captain.username|default:"не назначен" }})
+                            (Капитан: {{ team.captain.username }})
                         {% else %}
-                            (Капитан: не назначен)
+                            (Без капитана)
                         {% endif %}
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Пока нет команд.</p>
+            <p>Команды не созданы.</p>
         {% endif %}
-    
+
         {% if is_founder %}
-            <a href="{% url 'tasks:create_team' startup.id %}" class="back-button" style="margin-top: 10px; background-color: #2ecc71;">
-                ➕ Создать команду
-            </a>
+            <a href="{% url 'tasks:create_team' startup.id %}" style="background-color:#2ecc71;">➕ Создать команду</a>
         {% endif %}
     </div>
-    
-
 </div>
 
 <script>
-    // Функция для открытия и закрытия сайдбара
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('open');
-    }
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.remove("show");
+        }
+    });
+
+    mobileMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            mobileMenu.classList.remove("show");
+        });
+    });
 </script>
 
 </body>

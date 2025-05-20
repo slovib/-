@@ -1,24 +1,80 @@
-<h2>Создание команды для {{ startup.name }}</h2>
+<h2 style="color: #e0e0e0; font-family: Arial, sans-serif; text-align: center; margin-bottom: 20px;">
+    Создание команды для {{ startup.name }}
+</h2>
+
+<style>
+    body {
+        background-color: #0a0f2c;
+        font-family: 'Segoe UI', sans-serif;
+        color: #e0e0e0;
+        padding: 40px;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        background-color: #11193f;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #314477;
+        border-radius: 6px;
+        background-color: #1a244f;
+        color: #ffffff;
+    }
+
+    select[multiple] {
+        height: 120px;
+    }
+
+    button {
+        background-color: #1a75ff;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+    }
+
+    button:hover {
+        background-color: #145bd6;
+    }
+</style>
 
 <form method="post">
     {% csrf_token %}
     
     <label for="name">Название команды:</label>
-    <input type="text" name="name" required><br><br>
+    <input type="text" name="name" required>
 
-    <label for="members">Участники:</label><br>
+    <label for="members">Участники:</label>
     <select name="members" multiple required>
         {% for user in all_users %}
             <option value="{{ user.id }}">{{ user.username }}</option>
         {% endfor %}
-    </select><br><br>
+    </select>
 
-    <label for="captain">Капитан:</label><br>
+    <label for="captain">Капитан:</label>
     <select name="captain" required>
         {% for user in all_users %}
             <option value="{{ user.id }}">{{ user.username }}</option>
         {% endfor %}
-    </select><br><br>
+    </select>
 
     <button type="submit">Создать команду</button>
 </form>

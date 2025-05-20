@@ -1,8 +1,84 @@
 {% block content %}
-<h2>Назначить роль в стартапе: {{ startup.name }}</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Назначить</button>
-</form>
+<style>
+    body {
+        background: linear-gradient(135deg, #1e2a38, #3d566e);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #e0eaf5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: rgba(30, 45, 60, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+        color: #dceaff;
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    label {
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #c4d6e5;
+    }
+
+    input,
+    select,
+    textarea {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #4f7db2;
+        background-color: #22384d;
+        color: #e0eaf5;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #6ea2dd;
+    }
+
+    button[type="submit"] {
+        background-color: #4f7db2;
+        padding: 12px 25px;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #3c679c;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="container">
+    <h2>Назначить роль в стартапе: {{ startup.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">📌 Назначить</button>
+    </form>
+</div>
 {% endblock %}

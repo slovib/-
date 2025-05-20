@@ -1,6 +1,207 @@
-<h1>Список стартапов</h1>
-<ul>
-    {% for startup in startups %}
-        <li>{{ startup.name }}</li>  <!-- Заменить на атрибуты модели стартапа -->
-    {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Стартапы | MirecleHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1f2e3d, #355471);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            color: #e0eaf5;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #192a3a;
+            padding: 15px 30px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            font-size: 28px;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 60px;
+            right: 30px;
+            background-color: #22384d;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .mobile-menu a {
+            color: #fff;
+            padding: 10px 0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: #79b8ff;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: rgba(20, 35, 50, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .startup-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .startup-card {
+            background-color: #23364d;
+            border-radius: 16px;
+            width: 320px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .startup-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            background-color: #1c2d3c;
+            margin-bottom: 15px;
+        }
+
+        .startup-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #d2e6ff;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: #a6c7e6;
+            margin-bottom: 12px;
+        }
+
+        .founder {
+            font-size: 0.9rem;
+            color: #79b8ff;
+            margin-bottom: 15px;
+        }
+
+        .detail-link {
+            background-color: #4f7db2;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .detail-link:hover {
+            background-color: #3a5d85;
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="logo">🚀 MirecleHub</div>
+    <div class="hamburger" id="hamburger">&#9776;</div>
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="{% url 'news:news_list' %}">Новости</a>
+        <a href="{% url 'startup:create_startup' %}">Создать</a>
+        <a href="{% url 'users:profile' %}">Профиль</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2 style="text-align:center;">🚀 Стартапы платформы</h2>
+    <div class="startup-list">
+        {% for startup in startups %}
+            <div class="startup-card">
+                {% if startup.logo %}
+                    <img src="{{ startup.logo.url }}" alt="Логотип {{ startup.name }}" class="logo-img">
+                {% else %}
+                    <img src="/static/img/startup_placeholder.png" alt="Нет логотипа" class="logo-img">
+                {% endif %}
+                <div class="startup-name">{{ startup.name }}</div>
+                <div class="description">{{ startup.description|truncatewords:20 }}</div>
+                <div class="founder">👤 {{ startup.founder.username }}</div>
+                <a href="{% url 'startup:startup_detail' startup.id %}" class="detail-link">Подробнее</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    const hamburger = document.getElementById("hamburger");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    hamburger.addEventListener("click", () => {
+        mobileMenu.classList.toggle("show");
+        hamburger.innerHTML = mobileMenu.classList.contains("show") ? "✖" : "&#9776;";
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.remove("show");
+            hamburger.innerHTML = "&#9776;";
+        }
+    });
+
+    mobileMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            mobileMenu.classList.remove("show");
+            hamburger.innerHTML = "&#9776;";
+        });
+    });
+</script>
+
+</body>
+</html>

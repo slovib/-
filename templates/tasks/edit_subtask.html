@@ -1,8 +1,115 @@
-<h2>Редактирование подзадачи</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Сохранить</button>
-</form>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактирование подзадачи</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0a1124;
+      font-family: 'Segoe UI', sans-serif;
+      color: #f1f5ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
 
-<p><a href="{% url 'tasks:task_detail' task.id %}">← Назад к задаче</a></p>
+    h2 {
+      font-size: 28px;
+      margin-bottom: 24px;
+      color: #ffffff;
+    }
+
+    .form-wrapper {
+      background-color: #162346;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    form p {
+      margin-bottom: 20px;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #cfd7ff;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: none;
+      border-radius: 10px;
+      background-color: #1e2f5a;
+      color: #ffffff;
+      transition: box-shadow 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px #448aff;
+    }
+
+    .errorlist {
+      color: #ff7070;
+      font-size: 14px;
+      margin: 6px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1a75ff, #4da0ff);
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #145bd6, #3b90ff);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #9dbdff;
+      font-size: 15px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Редактирование подзадачи</h2>
+
+  <div class="form-wrapper">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Сохранить</button>
+    </form>
+  </div>
+
+  <p><a class="back-link" href="{% url 'tasks:task_detail' task.id %}">← Назад к задаче</a></p>
+
+</body>
+</html>

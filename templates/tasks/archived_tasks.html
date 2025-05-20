@@ -1,13 +1,95 @@
-
 {% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Архив задач — {{ team.name }}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b1124;
+      font-family: 'Segoe UI', sans-serif;
+      color: #e6ecff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #ffffff;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    li {
+      background-color: #162346;
+      padding: 18px 20px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    li a {
+      color: #81aaff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    li a:hover {
+      color: #ffffff;
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .task-meta {
+      font-size: 14px;
+      color: #aabbee;
+    }
+
+    .back-link {
+      margin-top: 30px;
+      color: #9dbdff;
+      text-decoration: none;
+      font-size: 15px;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
 <h2>📦 Архив задач команды {{ team.name }}</h2>
 
 <ul>
   {% for task in tasks %}
     <li>
-      <a href="{% url 'tasks:task_detail' task.id %}">{{ task.title }}</a>
-      {% if task.is_completed %}✅{% else %}❌{% endif %}
-      — дедлайн: {{ task.due_date|date:"d.m.Y H:i" }}
+      <div class="task-info">
+        <div>
+          <a href="{% url 'tasks:task_detail' task.id %}">{{ task.title }}</a>
+          {% if task.is_completed %} ✅ {% else %} ❌ {% endif %}
+        </div>
+        <div class="task-meta">Дедлайн: {{ task.due_date|date:"d.m.Y H:i" }}</div>
+      </div>
       <a href="{% url 'tasks:unarchive_task' task.id %}">🔄 Восстановить</a>
     </li>
   {% empty %}
@@ -15,5 +97,8 @@
   {% endfor %}
 </ul>
 
-<p><a href="{% url 'tasks:team_detail' team.id %}">← Назад к команде</a></p>
+<a class="back-link" href="{% url 'tasks:team_detail' team.id %}">← Назад к команде</a>
+
+</body>
+</html>
 {% endblock %}

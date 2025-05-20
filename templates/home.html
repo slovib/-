@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>MirecleHUB - Виртуальное управление стартапом</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="header">
+    <div class="header__inner">
+      <img src="{% static 'images/logo5.png' %}" alt="Логотип MirecleHUB" class="header__logo" />
+
+      <style>
+        .avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-right: 30px;
+          border: 5px solid #4f7db2;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+      </style>
+
+      <nav>
+        <ul class="header__nav">
+          <li class="header__nav__item">
+            <a href="{% url 'news:news_list'%}" class="header__nav__item__link">Новости</a>
+          </li>
+          <li class="header__nav__item">
+            <a href="{% url 'startup:startup_list'%}" class="header__nav__item__link">Стартапы</a>
+          </li>
+
+          {% if user.is_authenticated %}
+          <li class="header__nav__item">
+            <a href="{% url 'users:profile' %}" class="header__nav__item__link">
+              {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Аватар" class="avatar">
+              {% else %}
+                <img src="/media/avatars/default.jpg" alt="Аватар" class="avatar">
+              {% endif %}
+            </a>
+          </li>
+          {% else %}
+          <li class="header__nav__item">
+            <a href="{% url 'users:login' %}" class="header__nav__item__link">Войти</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <div class="intro__upper">
+        <img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/illustration-intro.png" alt="" class="intro__illustration" />
+      </div>
+
+      <div class="intro__lower">
+        <h1 class="intro__heading">Все ваши файлы в одном надежном месте, доступном в любое время.</h1>
+        <div class="intro__cta">
+          <p class="intro__paragraph">Mirecle хранит все ваши важные файлы в одном безопасном месте. Получайте к ним доступ в любое время, делитесь и сотрудничайте с друзьями, семьей и коллегами.</p>
+          <a href="#" class="button button--cta">Начать</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="features__box">
+        <img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-access-anywhere.svg" alt="" class="features__box__image">
+        <h2 class="features__box__heading">Доступ к файлам из любой точки</h2>
+        <p>Используйте смартфон, планшет или компьютер для доступа к вашим файлам везде, где бы вы ни были.</p>
+      </div>
+
+      <div class="features__box">
+        <img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-security.svg" alt="" class="features__box__image">
+        <h2 class="features__box__heading">Надежная защита</h2>
+        <p>Двухфакторная аутентификация и шифрование под контролем пользователя — лишь малая часть функций безопасности.</p>
+      </div>
+
+      <div class="features__box">
+        <img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-collaboration.svg" alt="" class="features__box__image">
+        <h2 class="features__box__heading">Совместная работа в реальном времени</h2>
+        <p>Делитесь файлами и папками с друзьями, семьей и коллегами для совместной работы без вложений по электронной почте.</p>
+      </div>
+
+      <div class="features__box">
+        <img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-any-file.svg" alt="" class="features__box__image">
+        <h2 class="features__box__heading">Хранение любых файлов</h2>
+        <p>От фотографий до рабочих документов — Mirecle позволяет хранить и делиться файлами любого типа безопасно.</p>
+      </div>
+    </div>
+
+    <div class="productive">
+      <img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/illustration-stay-productive.png" alt="" class="img-responsive productive__image" />
+      <div class="productive__box">
+        <h2 class="productive__heading">Будьте продуктивны в любом месте</h2>
+        <p class="productive__paragraph">Доступ к файлам всегда под рукой — где бы вы ни находились. Mirecle обеспечит надежное хранение.</p>
+        <p class="productive__paragraph">Делитесь файлами и папками безопасно для совместной работы без вложений в письмах.</p>
+        <p class="productive__paragraph"><a href="#" class="productive__link">Узнать, как работает Mirecle</a></p>
+      </div>
+    </div>
+
+    <div class="quotes">
+      <div class="quotes__inner">
+        <div class="quote">
+          <p class="quote__text">Fylo повысил продуктивность нашей команды в разы. С переходом на Mirecle мы стали слаженной командой.</p>
+          <div class="quote__attribution">
+            <img src="{% static 'images/profile-2.jpg' %}" alt="Фото Сатиша Пателя" class="quote__attribution__image"> 
+            <p class="quote__attribution__author"><span class="quote__attribution__author__title">Билл Гейтс</span><br>Основатель и CEO, Huddle</p>
+          </div>
+        </div>
+
+        <div class="quote">
+          <p class="quote__text">Fylo повысил продуктивность нашей команды в разы. С переходом на Mirecle мы стали слаженной командой.</p>
+          <div class="quote__attribution">
+            <img src="{% static 'images/profile-1.jpg' %}" alt="Брюс Маккензи" class="quote__attribution__image"> 
+            <p class="quote__attribution__author"><span class="quote__attribution__author__title">Илон Маск</span><br>Основатель и CEO, Huddle</p>
+          </div>
+        </div>
+
+        <div class="quote">
+          <p class="quote__text">Fylo повысил продуктивность нашей команды в разы. С переходом на Mirecle мы стали слаженной командой.</p>
+          <div class="quote__attribution">
+            <img src="{% static 'images/profile-3.jpg' %}" alt="Брюс Маккензи" class="quote__attribution__image"> 
+            <p class="quote__attribution__author"><span class="quote__attribution__author__title">Марк Цукерберг</span><br>Основатель и CEO, Huddle</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="earlyaccess">
+      <h2 class="earlyaccess__heading">Получите ранний доступ</h2>
+      <p>Регистрация займет всего минуту, а наш бесплатный стартовый тариф очень щедрый. Если у вас есть вопросы, служба поддержки с радостью поможет.</p>
+
+      <form class="earlyaccess__form">
+        <div class="earlyaccess__form__left">
+          <label for="email" class="sr-only">Email:</label>
+          <input type="email" id="email" class="earlyaccess__email" placeholder="email@example.com">
+        </div>
+        <button type="submit" id="signup" class="button earlyaccess__button">Начать бесплатно</button>
+      </form>
+
+      <p class="hidden signup__form__warning" id="emailWarning">Пожалуйста, введите корректный email</p>
+    </div>
+
+    <div class="footer__image">
+      <img src="{% static 'images/logo5.png' %}" alt="Логотип MirecleHUB" class="header__logo" />
+    </div>
+
+    <div class="footer__sections">
+      <div class="footer__sections1">
+        <p class="footer__sections__text"><img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-location.svg" alt=""> <span class="footer__sections__text__inner">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</span></p>
+      </div>
+
+      <div class="footer__sections2">
+        <p class="footer__sections__text footer__sections__text--contact"><img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-phone.svg" alt=""> <span class="footer__sections__text__inner">+1-543-123-4567</span></p>
+        <p class="footer__sections__text footer__sections__text--contact"><img src="https://bobmatyas.github.io/fm-fylo-dark-landing-page/images/icon-email.svg" alt=""> <span class="footer__sections__text__inner">example@fylo.com</span></p>
+      </div>
+
+      <div class="footer__sections3">
+        <ul class="footer__list">
+          <li><a href="#" class="footer__list__link">О нас</a></li>
+          <li><a href="#" class="footer__list__link">Вакансии</a></li>
+          <li><a href="#" class="footer__list__link">Пресса</a></li>
+          <li><a href="#" class="footer__list__link">Блог</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__sections4">
+        <ul class="footer__list">
+          <li><a href="#" class="footer__list__link">Связаться с нами</a></li>
+          <li><a href="#" class="footer__list__link">Условия</a></li>
+          <li><a href="#" class="footer__list__link">Политика конфиденциальности</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__sections5">
+        <ul class="footer__social">
+          <li class="footer__social__item footer__social__item--facebook">[Facebook SVG]</li>
+          <li class="footer__social__item footer__social__item--twitter">[Twitter SVG]</li>
+          <li class="footer__social__item">[Instagram SVG]</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,12 +1,216 @@
-
 {% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1e2a38, #3d566e);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #e0eaf5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: rgba(30, 45, 60, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+    }
+
+    .avatar-preview {
+        flex: 0 0 200px;
+        text-align: center;
+    }
+
+    .avatar-preview img {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #4f7db2;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        transition: 0.3s;
+    }
+
+    .avatar-preview label,
+    .avatar-preview form button {
+        margin-top: 15px;
+        display: inline-block;
+        background-color: #4f7db2;
+        padding: 8px 15px;
+        border-radius: 6px;
+        color: white;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .avatar-preview label:hover,
+    .avatar-preview form button:hover {
+        background-color: #3a5d85;
+    }
+
+    .remove-avatar {
+        margin-top: 10px;
+        background-color: #a33 !important;
+    }
+
+    .remove-avatar:hover {
+        background-color: #822 !important;
+    }
+
+    .form-section {
+        flex: 1;
+    }
+
+    h2 {
+        color: #dceaff;
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        font-weight: 700;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-field label {
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #c4d6e5;
+    }
+
+    .form-field input,
+    .form-field textarea,
+    .form-field select {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #4f7db2;
+        background-color: #22384d;
+        color: #e0eaf5;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus {
+        outline: none;
+        border-color: #6ea2dd;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .form-actions button {
+        background-color: #4f7db2;
+        padding: 12px 25px;
+        color: white;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    .form-actions button:hover {
+        background-color: #3c679c;
+        transform: scale(1.05);
+    }
+
+    .form-actions a {
+        color: #a4c6ff;
+        text-decoration: none;
+        font-size: 0.95rem;
+    }
+
+    .form-actions a:hover {
+        text-decoration: underline;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+</style>
+
 <div class="container">
-    <h2>Редактирование профиля</h2>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Сохранить изменения</button>
-    </form>
-    <a href="{% url 'users:profile' %}">Отмена</a>
+    <div class="avatar-preview">
+        {% if user.avatar %}
+            <img id="avatarPreview" src="{{ user.avatar.url }}" alt="Avatar">
+        {% else %}
+            <img id="avatarPreview" src="/media/avatars/default.jpg" alt="Avatar">
+        {% endif %}
+
+        <label for="id_avatar">📷 Сменить аватар</label>
+
+        {% if user.avatar %}
+            <form method="post" style="margin-top: 10px;">
+                {% csrf_token %}
+                <button type="submit" name="remove_avatar" class="remove-avatar">🗑 Удалить</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="form-section">
+        <h2>Редактировать профиль</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-field">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+
+            <div class="form-field">
+                {{ form.bio.label_tag }}
+                {{ form.bio }}
+            </div>
+
+            <div class="form-field">
+                {{ form.skills.label_tag }}
+                {{ form.skills }}
+            </div>
+
+            <div class="form-field">
+                {{ form.profession.label_tag }}
+                {{ form.profession }}
+            </div>
+
+            <div class="form-field" style="display: none;">
+                {{ form.avatar }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">💾 Сохранить</button>
+                <a href="{% url 'users:profile' %}">Отмена</a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+    const fileInput = document.getElementById("id_avatar");
+    const preview = document.getElementById("avatarPreview");
+
+    fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+        }
+    });
+</script>
 {% endblock %}

@@ -10,6 +10,7 @@
     .container {
         max-width: 800px;
         margin: 0 auto;
+        position: relative;
     }
 
     .startup-header {
@@ -33,6 +34,7 @@
         background-color: #1e293b;
         padding: 15px;
         border-radius: 10px;
+        flex-wrap: wrap;
     }
 
     .filter-form input, .filter-form select {
@@ -41,6 +43,8 @@
         border: none;
         background: #2c3e50;
         color: white;
+        flex: 1 1 150px;
+        min-width: 150px;
     }
 
     .filter-form button {
@@ -50,6 +54,7 @@
         border-radius: 5px;
         cursor: pointer;
         color: white;
+        flex-shrink: 0;
     }
 
     .news-container {
@@ -90,10 +95,114 @@
     a:hover {
         text-decoration: underline;
     }
+
+    /* Кнопка "Добавить новость" */
+    .add-news-btn {
+        display: inline-block;
+        background-color: #f1c40f;
+        color: #0a192f;
+        font-weight: 700;
+        padding: 10px 20px;
+        border-radius: 30px;
+        text-align: center;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .add-news-btn:hover {
+        background-color: #d4ac0d;
+    }
+
+    /* Гамбургер-меню */
+    .hamburger {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 30px;
+        height: 22px;
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .hamburger div {
+        width: 100%;
+        height: 4px;
+        background-color: #f1c40f;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    /* Меню (по умолчанию скрыто) */
+    .menu {
+        position: fixed;
+        top: 60px;
+        right: 20px;
+        background-color: rgba(30, 41, 59, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        padding: 15px 25px;
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 999;
+    }
+
+    .menu a {
+        color: #f1c40f;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+    .menu a:hover {
+        text-decoration: underline;
+    }
+
+    /* Активное меню */
+    .menu.active {
+        display: flex;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburger = document.querySelector('.hamburger');
+        const menu = document.querySelector('.menu');
+
+        hamburger.addEventListener('click', () => {
+            menu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Закрыть меню по клику вне его
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+    });
+</script>
 
 {% block content %}
 <div class="container">
+
+    <!-- Гамбургер-меню -->
+    <div class="hamburger" aria-label="Меню" role="button" tabindex="0">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <nav class="menu" aria-label="Основное меню">
+        <a href="{% url 'home' %}">Главная</a>
+        <a href="{% url 'news:news_list' %}">Новости</a>
+        <!-- Добавь сюда другие ссылки по необходимости -->
+    </nav>
+
     <div class="startup-header">
         {% if startup.logo %}
             <img src="{{ startup.logo.url }}" alt="Логотип {{ startup.name }}" class="startup-logo-big">
@@ -104,11 +213,12 @@
     <p><strong>Описание:</strong> {{ startup.description }}</p>
     <p><strong>Основатель:</strong> {{ startup.founder.username }}</p>
 
-    
+    {% if user.is_authenticated and user == startup.founder %}
+        <a href="{% url 'news:create_news' startup.id %}" class="add-news-btn">➕ Добавить новость</a>
+    {% endif %}
 
     <h2>Новости стартапа</h2>
 
-    
     <!-- Форма фильтрации -->
     <form method="GET" action="{% url 'news:startup_detail' startup.id %}" class="filter-form">
         <input type="text" name="title" placeholder="Поиск по заголовку" value="{{ request.GET.title }}">
@@ -121,6 +231,7 @@
 
         <button type="submit">Применить</button>
     </form>
+
     <div class="news-container">
         {% for item in news %}
             <div class="news-item">

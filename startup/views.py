@@ -19,6 +19,9 @@ from django.contrib.auth.decorators import login_required
 User = get_user_model()
 
 
+def home(request):
+    return render(request, 'home.html')
+
 @login_required
 def create_startup(request):
     if not Startup.objects.filter(founder=request.user).exists():  # Проверка, что у пользователя нет стартапа
@@ -215,7 +218,7 @@ def invite_user(request, user_id, startup_id):
     # Проверяем, является ли текущий пользователь основателем стартапа
     if startup.founder != request.user:
         messages.error(request, "Вы не можете приглашать участников в этот стартап.")
-        return redirect('search_users', startup_id=startup.id)
+        return redirect('startup:search_users', startup_id=startup.id)
 
     # Создаём приглашение
     token = get_random_string(length=32)

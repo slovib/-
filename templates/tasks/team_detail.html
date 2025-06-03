@@ -118,8 +118,7 @@
        max-height: 70px;
        object-fit: contain;
        display: block;
-}
-
+    }
 
     .logo {
       font-weight: 600;
@@ -168,7 +167,23 @@
       display: flex;
     }
 
-    
+    /* Кнопка назад */
+    .btn-back {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #60a5fa;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 6px 12px;
+      border: 1.5px solid #60a5fa;
+      border-radius: 8px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .btn-back:hover {
+      background-color: #60a5fa;
+      color: #0f172a;
+    }
   </style>
 
   <!-- Chart.js -->
@@ -196,6 +211,10 @@
 </header>
 
 <h2>Команда: {{ team.name }}</h2>
+
+<!-- Кнопка назад -->
+<a href="{% url 'startup:startup_detail' team.startup.id %}" class="btn-back">← Назад к стартапу</a>
+
 <p>Стартап: {{ team.startup.name }}</p>
 
 <h3>Участники:</h3>

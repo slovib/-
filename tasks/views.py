@@ -4,7 +4,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseForbidden
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
+from django.utils import timezone
+
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from django.utils import timezone
+from django.urls import reverse
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+from .forms import TaskFilterForm
 from .models import TaskActivity, Team, TeamMembership, Task, TaskComment, SubTask
 from .forms import TaskForm, TaskFilterForm, TaskCommentForm, SubTaskForm
 from startup.models import Startup
@@ -349,21 +361,6 @@ def delete_task(request, task_id):
     messages.success(request, "Задача удалена.")
     return redirect("tasks:team_detail", team_id=team_id)
 
-
-
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-from django.utils import timezone
-
-from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
-from django.utils import timezone
-from django.urls import reverse
-from django.core.serializers.json import DjangoJSONEncoder
-import json
-from .forms import TaskFilterForm
 
 
 @login_required

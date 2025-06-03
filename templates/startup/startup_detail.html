@@ -6,11 +6,17 @@
     <title>{{ startup.name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            background: linear-gradient(135deg, #1f2e3d, #355471);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        html, body {
             margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #121b25; /* тёмный фон вокруг контейнера */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #e0eaf5;
+        }
+
+        body {
+            /* убрал фон градиент, оставил цвет в html,body */
         }
 
         .main-header {
@@ -104,6 +110,22 @@
             font-size: 1.05rem;
         }
 
+        .btn-chat {
+            display: inline-block;
+            background-color: #f1c40f;
+            color: #22384d;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-chat:hover {
+            background-color: #d4b106;
+        }
+
         .role-management,
         .user-list,
         .teams-section {
@@ -170,7 +192,7 @@
     <div class="hamburger" id="hamburger">&#9776;</div>
     <nav class="mobile-menu" id="mobileMenu">
         <a href="{% url 'news:news_list' %}">Новости</a>
-        <a href="{% url 'startup:search_users' startup.id %}">Найти работника</a>
+        <a href="{% url 'startup:search_users' startup.id %}">Пользователи</a>
         <a href="{% url 'users:profile' %}">Профиль</a>
     </nav>
 </header>
@@ -188,19 +210,22 @@
     </div>
 
     <p><strong>Описание:</strong> {{ startup.description }}</p>
+
+    <!-- Кнопка перехода в чат -->
+    <a href="{% url 'chat:startup_chat' startup.id %}" class="btn-chat">Перейти в чат стартапа</a>
+
     <p><strong>Основатель:</strong> {{ startup.founder.username }}</p>
     <p><strong>Дата создания:</strong> {{ startup.created_at }}</p>
 
     {% if is_founder %}
-<div class="role-management">
-    <h3>Управление стартапом</h3>
-    <a href="{% url 'startup:assign_role' startup.id %}">Назначить роль</a>
-    <a href="{% url 'startup:edit_startup' startup.id %}">Редактировать</a>
-    <a href="{% url 'startup:delete_startup' startup.id %}">Удалить</a>
-    <a href="{% url 'news:create_news' startup.id %}" style="background-color:#f39c12;">📰 Добавить новость</a>
-</div>
-{% endif %}
-
+    <div class="role-management">
+        <h3>Управление стартапом</h3>
+        <a href="{% url 'startup:assign_role' startup.id %}">Назначить роль</a>
+        <a href="{% url 'startup:edit_startup' startup.id %}">Редактировать</a>
+        <a href="{% url 'startup:delete_startup' startup.id %}">Удалить</a>
+        <a href="{% url 'news:create_news' startup.id %}" style="background-color:#f39c12;">📰 Добавить новость</a>
+    </div>
+    {% endif %}
 
     <a href="{% url 'startup:startup_list' %}" class="back-button">← Назад к списку</a>
 
